@@ -9,6 +9,7 @@ dotenv.config()
 import { registerValidation } from "./validations/auth.js"
 
 import UserModel from "./models/User.js"
+import checkAuth from "./utils/checkAuth.js"
 
 mongoose
     .connect(process.env.MONGODB_URI)
@@ -102,6 +103,27 @@ app.post("/auth/register", registerValidation, async (req, res) => {
         console.log("err=>", err)
         res.status(500).json({
             message: "registration failed",
+        })
+    }
+})
+
+app.get("/auth/me", checkAuth, async (req, res) => {
+    try {
+        const user = await UserModel.findById(req.userId)
+
+        if (!user) {
+            return res.status(404).json({
+                message: "can't find user"
+            })
+        }
+
+        const { passwordHash, ...userData } = user._doc
+
+        res.json(userData)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "No access"
         })
     }
 })
