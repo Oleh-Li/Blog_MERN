@@ -1,4 +1,4 @@
-
+import PostModel from "../models/Post.js"
 
 export const create = (req, res) => {
     try {
