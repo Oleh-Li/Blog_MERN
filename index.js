@@ -2,6 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 import multer from "multer"
+import cors from "cors"
 import { loginValidation, postCreateValidation, registerValidation } from "./validations.js"
 import { handleValidationErrors, checkAuth } from "./utils/index.js"
 import { UserController, PostController } from "./controllers/index.js"
@@ -26,8 +27,8 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage })
-
 app.use(express.json()) //without this will be undefined in req.body
+app.use(cors())
 app.use('/uploads', express.static('uploads'))
 
 app.get("/", (req, res) => {
