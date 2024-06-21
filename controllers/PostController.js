@@ -35,10 +35,10 @@ export const getOne = async (req, res) => {
         const postId = req.params.id;
 
         const updatedPost = await PostModel.findByIdAndUpdate(
-            postId,
+            { _id: postId },
             { $inc: { viewCount: 1 } },
             { returnDocument: 'after', new: true } // Added new: true parameter to return an updated document
-        );
+        ).populate('user');
 
         if (!updatedPost) {
             return res.status(404).json({
@@ -46,7 +46,7 @@ export const getOne = async (req, res) => {
             });
         }
 
-        res.json(updatedPost);
+        res.json(updatedPost)
     } catch (err) {
         console.log(err);
         res.status(500).json({
