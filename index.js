@@ -6,6 +6,7 @@ import cors from "cors"
 import { loginValidation, postCreateValidation, registerValidation } from "./validations.js"
 import { handleValidationErrors, checkAuth } from "./utils/index.js"
 import { UserController, PostController } from "./controllers/index.js"
+import fs from 'fs'
 
 dotenv.config()
 
@@ -19,6 +20,9 @@ const app = express()
 
 const storage = multer.diskStorage({
     destination: (_, __, cb) => {
+        if (!fs.existsSync('uploads')) {
+            fs.mkdirSync('uploads')
+        }
         cb(null, 'uploads')
     },
     filename: (_, file, cb) => {
