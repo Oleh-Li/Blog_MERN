@@ -19,8 +19,14 @@ export const getLastTags = async (req, res) => {
 
 export const getAll = async (req, res) => {
     try {
-        const posts = await PostModel.find().populate('user').exec()
+        const sortOption = {};
 
+        if (req.query.sort === 'popular') {
+            sortOption.viewCount = -1;
+        } else {
+            sortOption.createdAt = -1;
+        }
+        const posts = await PostModel.find().populate('user').sort(sortOption).exec()
         res.json(posts)
     } catch (err) {
         console.log(err)
