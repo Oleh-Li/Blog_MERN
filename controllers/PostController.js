@@ -36,6 +36,25 @@ export const getAll = async (req, res) => {
     }
 }
 
+export const getPostsByTag = async (req, res) => {
+    try {
+        const { tag } = req.params
+        const sortOption = {};
+        if (req.query.sort === 'popular') {
+            sortOption.viewCount = -1;
+        } else {
+            sortOption.createdAt = -1;
+        }
+        const posts = (await PostModel.find().populate('user').sort(sortOption).exec()).filter(post => post.tags.includes(tag))
+        res.json(posts)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Can't get posts"
+        })
+    }
+}
+
 export const getOne = async (req, res) => {
     try {
         const postId = req.params.id;
