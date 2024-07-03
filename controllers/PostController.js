@@ -2,7 +2,8 @@ import PostModel from "../models/Post.js"
 
 export const getLastTags = async (req, res) => {
     try {
-        const posts = await PostModel.find().limit(5).exec()
+        const sortOption = { createdAt: -1 };
+        const posts = await PostModel.find().sort(sortOption).limit(5).exec()
         const tags = posts.map(obj => obj.tags)
             .flat()
             .filter((value, index, self) => self.indexOf(value) === index) //filter only unique values
@@ -27,6 +28,25 @@ export const getAll = async (req, res) => {
             sortOption.createdAt = -1;
         }
         const posts = await PostModel.find().populate('user').sort(sortOption).exec()
+        res.json(posts)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            message: "Can't get posts"
+        })
+    }
+}
+
+export const getPostsByTag = async (req, res) => {
+    try {
+        const { tag } = req.params
+        const sortOption = {};
+        if (req.query.sort === 'popular') {
+            sortOption.viewCount = -1;
+        } else {
+            sortOption.createdAt = -1;
+        }
+        const posts = (await PostModel.find().populate('user').sort(sortOption).exec()).filter(post => post.tags.includes(tag))
         res.json(posts)
     } catch (err) {
         console.log(err)
