@@ -2,7 +2,8 @@ import PostModel from "../models/Post.js"
 
 export const getLastTags = async (req, res) => {
     try {
-        const posts = await PostModel.find().limit(5).exec()
+        const sortOption = { createdAt: -1 };
+        const posts = await PostModel.find().sort(sortOption).limit(5).exec()
         const tags = posts.map(obj => obj.tags)
             .flat()
             .filter((value, index, self) => self.indexOf(value) === index) //filter only unique values
